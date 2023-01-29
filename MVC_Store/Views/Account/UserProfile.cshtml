@@ -20,6 +20,12 @@
     <div class="form-horizontal">
 
         <hr />
+
+        <span>
+            @Html.ActionLink("All orders", "Orders", "Account", "", new {@class="text-body"})
+        </span>
+
+        <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
 
