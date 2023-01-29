@@ -1,0 +1,91 @@
+﻿@model IEnumerable<MVC_Store.Models.ViewModels.Shop.ProductVM>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+<link rel="stylesheet" href="~/css/PagedList.css" asp-append-version="true" type="text/css" />
+
+<h1>Products</h1>
+
+<select id="SelectCategory" name="SelectCategory">
+    <option value="0">All</option>
+    @foreach (var item in ViewBag.Categories)
+    {
+        if (ViewBag.SelectedCat == item.Value)
+        {
+            <option selected="selected" value="@item.Value">@item.Text</option>
+        }
+        else
+        {
+            <option value="@item.Value">@item.Text</option>
+        }
+    }
+</select>
+<br /><br />
+
+<p>
+    @Html.ActionLink("Add new Product", "AddProduct", "Shop", null, new {@class="btn btn-success"})
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Image
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var product in ViewBag.OnePageOfProducts)
+        {
+        <tr>
+            <td>
+                @product.Name
+            </td>
+            <td>
+                @product.Description
+            </td>
+            <td>
+                @product.Price
+            </td>
+            <td>
+                <a href="/Admin/Shop/EditProduct/@product.Id">
+                    @if (@product.ImageName == null)
+                    {
+                        <img src="~/img/no_image.png" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/Uploads/Products/@product.Id/Thumbs/@product.ImageName">
+                    }
+                </a>
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditProduct", new { id = product.Id }, new{@class="btn btn-info"})  
+                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new{@class="btn btn-danger delete"})
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@Html.PagedListPager((IPagedList)ViewBag.OnePageOfProducts, page => Url.Action("Products", new {page, catId = ViewBag.SelectedCat}))
+
+@section Scripts
+{
+    <script src="~/js/ProductsScript.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MVC 5 Shopping Cart</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MVC_Store.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top">
+            <a class="navbar-brand" href="/">MVC Shop</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    @await Component.InvokeAsync("PagesMenuPartialVC")
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Logout", "Logout", "Account", null, new {@class="navbar-text", style="text-decoration: none"})</li>
+                    }
+                    else
+                    {
+                        if(ViewBag.Title == "Login")
+                        {
+                            <li class="navbar-text">
+                                @Html.ActionLink("Login", "Login", "Account", null, new { @class="active", style="text-decoration: none" })
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                @Html.ActionLink("Login", "Login", "Account", null, new { @class="navbar-text", style="text-decoration: none" })
+                            </li>
+                        }
+                    }
+
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                    {
+                        if (ViewBag.Title == "User Profile")
+                        {
+                            <li class="active">
+                                @await Component.InvokeAsync("UserNavPartialVC", new { area =""})
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                @await Component.InvokeAsync("UserNavPartialVC", new { area =""})
+                            </li>
+                        }     
+                    }
+                </ul>
+
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <span class="navbar-text ml-auto">
+                        @Html.ActionLink("Admin Area", "Index", "DashBoard", new {area = "Admin"}, null)
+                    </span>
+                }
+                else
+                {
+                    if (ViewBag.Title != "Cart Details")
+                    {
+                        <span class="navbar-text ml-auto">
+                            @await Component.InvokeAsync("CartPartialVC")
+                        </span>
+                    }
+                }
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="container body-content" style="margin-top: 85px">
+        <div class="row">
+
+            <div class="col-sm-12 col-md-3 list-group">
+                @await Component.InvokeAsync("CategoriesMenuPartialVC")
+            </div>
+
+            @if (ViewBag.Sidebar == "Yes")
+            {
+                <div class="col">
+                    @RenderBody()
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    @await Component.InvokeAsync("SidebarPartialVC")
+                </div>
+            }
+            else
+            {
+                <div class="col">
+                    @RenderBody()
+                </div>
+            }
+        </div>
+
+        <footer class="border-top footer text-muted mt-5">
+            <div class="container">
+                &copy; 2023 - MVC_Store - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
